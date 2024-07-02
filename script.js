@@ -1,76 +1,48 @@
-$(document).ready(function () {
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxw5WzdpgsEg1t-rG0Slo5FGxehbR7oO7GgxqQhAR9ruYxn7i8Yl2efRLiZnDS2JYWA/exec'; // Replace with your Google Apps Script URL
+'use strict';
 
-    // Handle form submission to add user
-    $('#user-form').submit(function (event) {
-        event.preventDefault(); // Prevent default form submission
-        const formData = $(this).serializeArray(); // Get form data as an array
-        const data = {};
-        formData.forEach(field => {
-            data[field.name] = field.value;
-        });
 
-        $.ajax({
-            url: SCRIPT_URL,
-            method: 'POST',
-            data: { data: JSON.stringify(data) },
-            success: function (response) {
-                alert('User added successfully!');
-                fetchSheetData();
-            },
-            error: function () {
-                alert('Failed to add user. Please try again.');
-            }
-        });
 
-        this.reset(); // Reset the form
-    });
+/**
+ * navbar toggle
+ */
 
-    // Handle form submission to search user
-    $('#search-form').submit(function (event) {
-        event.preventDefault(); // Prevent default form submission
-        const searchName = $('#search-name').val().toLowerCase();
+const header = document.querySelector("[data-header]");
+const navToggleBtn = document.querySelector("[data-nav-toggle-btn]");
 
-        $.ajax({
-            url: SCRIPT_URL + '?searchName=' + searchName,
-            method: 'GET',
-            success: function (data) {
-                $('#search-results').empty(); // Clear existing list
-                const rows = JSON.parse(data);
-                if (rows.length === 0) {
-                    $('#search-results').append('<li>No user found.</li>');
-                } else {
-                    rows.forEach(row => {
-                        $('#search-results').append(`<li>${row[0]} - ${row[1]}</li>`); // Display each user
-                    });
-                }
-            },
-            error: function () {
-                alert('Failed to fetch data. Please try again.');
-            }
-        });
+navToggleBtn.addEventListener("click", function () {
+  header.classList.toggle("nav-active");
+  this.classList.toggle("active");
+});
 
-        this.reset(); // Reset the form
-    });
+/**
+ * toggle the navbar when click any navbar link
+ */
 
-    // Fetch data from Google Sheet and update the HTML
-    function fetchSheetData() {
-        $.ajax({
-            url: SCRIPT_URL,
-            method: 'GET',
-            success: function (data) {
-                $('#user-list').empty(); // Clear existing list
-                const rows = JSON.parse(data);
-                rows.forEach(row => {
-                    $('#user-list').append(`<li>${row[0]} - ${row[1]}</li>`); // Display each user
-                });
-            },
-            error: function () {
-                alert('Failed to fetch data. Please try again.');
-            }
-        });
-    }
+const navbarLinks = document.querySelectorAll("[data-nav-link]");
 
-    // Initial data fetch on page load
-    fetchSheetData();
+for (let i = 0; i < navbarLinks.length; i++) {
+  navbarLinks[i].addEventListener("click", function () {
+    header.classList.toggle("nav-active");
+    navToggleBtn.classList.toggle("active");
+  });
+}
+
+
+
+
+
+/**
+ * back to top & header
+ */
+
+const backTopBtn = document.querySelector("[data-back-to-top]");
+
+window.addEventListener("scroll", function () {
+  if (window.scrollY >= 100) {
+    header.classList.add("active");
+    backTopBtn.classList.add("active");
+  } else {
+    header.classList.remove("active");
+    backTopBtn.classList.remove("active");
+  }
 });
